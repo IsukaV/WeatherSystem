@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Document</title>
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" id="search-value">
+            <button><img src="search-icon.png" height="30px" id="search-btn"></button>
+        </div>
+        <div class="weather">
+            
+            <img src="rain.png" class="weather-icon">
+            <div class="city-temp-container">
+                <span class="loader"></span>
+                <div class="city-temp">
+                    <h1 class="temp">22°C</h1>
+                    <h2 class="city">New York</h2>
+                </div>
+                
+            </div>
+            
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png">
+                    <div>
+                        <p class="wind">15kmh</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var city = "colombo";
+        var loading = document.querySelector('.loader');
+        var city_temp = document.querySelector('.city-temp');
+        const apiKey = "fc1f75bdc8dc90bff82b7bbc3bf252c9";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=";
+
+        async function checkWeather(city){
+            showLoader();
+            try{
+                const response = await fetch(apiUrl + city + `&appid=${apiKey}`)
+                var data = await response.json();
+
+                console.log(data);
+                
+                document.querySelector(".city").innerHTML = data.name;
+                var celcius = data.main.temp - 273.15
+                document.querySelector(".temp").innerHTML = Math.ceil(celcius) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+            }catch(error){
+                console.log(error.toString());
+            }finally{
+                hideLoader();
+            } 
+        }  
+        checkWeather(city);
+
+        document.getElementById('search-btn').addEventListener('click', function(){
+            checkWeather(document.getElementById('search-value').value)
+        })
+
+        function showLoader(){ 
+            loading.style.display = "block";
+            city_temp.style.display = "none";
+        }
+        function hideLoader(){ 
+            loading.style.display = "none";
+            city_temp.style.display = "block";
+        }
+    </script>
+</body>
+</html>
